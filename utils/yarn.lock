@@ -181,10 +181,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@minsize/core@^1.0.1":
-  version "1.0.52"
-  resolved "https://registry.yarnpkg.com/@minsize/core/-/core-1.0.52.tgz#1659ef357edc707eaa4830774ee6f363c27fdc10"
-  integrity sha512-fe6Kq0FbcbSbFVb+2EqMyazF0wsPI0umVUSKC4OFfZCfhaLndT22z2AtLnudJqzRoCpNpF10etppgZl1QbpX1A==
+"@minsize/core@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@minsize/core/-/core-1.0.6.tgz#ac0d7034241b9fe615f0dadcf114a49ad963a65d"
+  integrity sha512-k+qlqaDZ2rt1NT7VsJMSMBJ5u0TaaV1otOMANOv/ih9Oa0vu4EEv5ab1iZ5NLwE4oVb/l97xwpz6HmYpt7ZJVg==
   dependencies:
     "@minsize/utils" "^0.0.19"
 

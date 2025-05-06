@@ -1,6 +1,6 @@
 {
   "name": "@minsize/plugin-utils",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "Import Frequently Used Utilities",
   "license": "MIT",
   "types": "index.ts",
@@ -16,7 +16,7 @@
     "build": "rollup --config config/rollup.config.ts --configPlugin @rollup/plugin-typescript"
   },
   "dependencies": {
-    "@minsize/core": "^1.0.1",
+    "@minsize/core": "^1.0.6",
     "@minsize/utils": "^0.0.19"
   },
   "devDependencies": {

@@ -1,58 +1,61 @@
-import { Plugin, PluginProps } from "@minsize/core" // Импорт типов `Plugin` и `PluginProps` из модуля ядра
-import plugin from "../plugin.json" // Импорт метаданных плагина из JSON-файла
-import * as utils from "@minsize/utils" // Импорт всех утилит из пакета `@minsize/utils`
+import { Plugin, PluginProps } from "@minsize/core" // Импортируем типы Plugin и PluginProps из ядра
+import plugin from "../plugin.json" // Импортируем метаданные плагина из JSON-файла
+import * as utils from "@minsize/utils" // Импортируем все утилиты из пакета @minsize/utils
+import { Props } from "./types/props" // Импортируем типы Props
 
 /**
  * Функция инициализации плагина
  *
- * @param props - Свойства, предоставляемые ядром, в том числе проверки безопасности и другие функции.
+ * @param props - Свойства, предоставляемые ядром, включая проверки безопасности и другие функции.
  */
-function init(props: PluginProps) {
-  // Проверка плагина с помощью механизма проверки из предоставленных свойств
-  if (props.checker.verify(init, plugin.uid)) return
+function init(this: Props, props: PluginProps) {
+  // Проверяем плагин с помощью механизма проверки из предоставленных свойств
+  if (props.checker.verify(init, plugin.uid)) {
+    return // Если проверка проходит успешно, функция возвращается
+  }
 
-  // Добавляем каждую утилиту в глобальное пространство
-  globalThis.clamp = utils.clamp
-  globalThis.decWord = utils.decWord
-  globalThis.alignTo = utils.alignTo
-  globalThis.toShort = utils.toShort
-  globalThis.timeAgo = utils.timeAgo
-  globalThis.formatNumber = utils.formatNumber
-  globalThis.random = utils.random
-  globalThis.randomByWeight = utils.randomByWeight
-  globalThis.isType = utils.isType
-  globalThis.omit = utils.omit
-  globalThis.pick = utils.pick
-  globalThis.sleep = utils.sleep
-  globalThis.copyText = utils.copyText
-  globalThis.createLinksFromText = utils.createLinksFromText
-  globalThis.comparison = utils.comparison
-  globalThis.generateUniqueKey = utils.generateUniqueKey
-  globalThis.unlink = utils.unlink
-  globalThis.textParserUrl = utils.textParserUrl
-  globalThis.memoize = utils.memoize
-  globalThis.retry = utils.retry
-  globalThis.parseQueryString = utils.parseQueryString
-  globalThis.parseVersionString = utils.parseVersionString
-  globalThis.chunks = utils.chunks
-  globalThis.shuffle = utils.shuffle
-  globalThis.unique = utils.unique
-  globalThis.groupBy = utils.groupBy
-  globalThis.orderBy = utils.orderBy
-  globalThis.HSVtoRGB = utils.HSVtoRGB
-  globalThis.RGBtoHEX = utils.RGBtoHEX
-  globalThis.RGBtoHSV = utils.RGBtoHSV
-  globalThis.HEXtoRGB = utils.HEXtoRGB
+  // Добавляем каждую утилиту в глобальное пространство имен
+  for (const key of Object.keys(utils)) {
+    switch (key) {
+      case "random": {
+        globalThis[key] = (
+          min: number,
+          max: number,
+          seed: number | undefined = this.seed,
+        ) => utils[key](min, max, seed)
+        break
+      }
+      case "randomByWeight": {
+        globalThis[key] = (
+          items: Record<string, number>,
+          seed: number | undefined = this.seed,
+        ) => utils[key](items, seed)
+        break
+      }
+      case "shuffle": {
+        globalThis[key] = (
+          array: unknown[],
+          seed: number | undefined = this.seed,
+        ) => utils[key].bind(this)(array, seed)
+        break
+      }
+      default: {
+        globalThis[key] = utils[key]
+      }
+    }
+  }
 }
 
 /**
  * Функция установки плагина
- * Возвращает объект плагина с метаданными и логикой инициализации.
+ *
+ * @returns объект плагина с метаданными и логикой инициализации.
  */
-function install(): Plugin {
+function install(props?: Props): Plugin {
   return {
     ...plugin, // Включает все метаданные из plugin.json
-    init, // Связывает метод инициализации с объектом плагина
+    init: init.bind(props), // Связывает метод инициализации с объектом плагина
+    restart: init.bind(props), // Добавляет поддержку перезапуска, связывая init
   }
 }
 
