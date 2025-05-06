@@ -44,9 +44,16 @@ jobs:
         working-directory: ${{ matrix.package }}
         run: yarn build
 
+      # Configure npm for GitHub Packages
+      - name: Configure npm for GitHub Packages
+        working-directory: ${{ matrix.package }}
+        run: |
+          echo "@minsize:registry=https://registry.npmjs.org" >> .npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.GIT_TOKEN }}" >> .npmrc
+
       # Publish to npm
       - name: Publish to npm
         working-directory: ${{ matrix.package }}/dist
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GIT_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --provenance --access public
