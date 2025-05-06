@@ -26,7 +26,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20" # Use the version of Node.js your project requires
-          cache: "yarn"
 
       # Install dependencies
       - name: Install Dependencies
