@@ -1,0 +1,41 @@
+name: Node.js Packages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - utils
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.package }}
+        run: npm install
+
+      - name: Build
+        working-directory: ${{ matrix.package }}
+        run: npm run build
+
+      - name: Publish to npm
+        working-directory: ${{ matrix.package }}/dist
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
