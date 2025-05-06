@@ -27,6 +27,13 @@ jobs:
         with:
           node-version: "20" # Use the version of Node.js your project requires
 
+      # Configure npm for GitHub Packages
+      - name: Configure npm for GitHub Packages
+        working-directory: ${{ matrix.package }}
+        run: |
+          echo "@minsize:registry=https://npm.pkg.github.com/" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GIT_TOKEN }}" >> .npmrc
+
       # Install dependencies
       - name: Install Dependencies
         working-directory: ${{ matrix.package }}
@@ -41,8 +48,8 @@ jobs:
       - name: Configure npm for GitHub Packages
         working-directory: ${{ matrix.package }}
         run: |
-          echo "@minsize:registry=https://registry.npmjs.org" >> .npmrc
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.GIT_TOKEN }}" >> .npmrc
+          echo "@minsize:registry=https://registry.npmjs.org" > .npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
 
       # Publish to npm
       - name: Publish to npm
