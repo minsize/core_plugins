@@ -1,4 +1,4 @@
-import { Plugin, PluginProps } from "@minsize/core" // Импортируем типы Plugin и PluginProps из ядра
+import { checker, Plugin, PluginProps } from "@minsize/core" // Импортируем типы Plugin и PluginProps из ядра
 import plugin from "../plugin.json" // Импортируем метаданные плагина из JSON-файла
 import * as utils from "@minsize/utils" // Импортируем все утилиты из пакета @minsize/utils
 import { Props } from "./types/props" // Импортируем типы Props
@@ -8,9 +8,9 @@ import { Props } from "./types/props" // Импортируем типы Props
  *
  * @param props - Свойства, предоставляемые ядром, включая проверки безопасности и другие функции.
  */
-function init(this: Props, props: PluginProps) {
+function init(this: Props, coreProps: PluginProps) {
   // Проверяем плагин с помощью механизма проверки из предоставленных свойств
-  if (props.checker.verify(init, plugin.uid)) {
+  if (checker.verify(init, plugin.uid)) {
     return // Если проверка проходит успешно, функция возвращается
   }
 

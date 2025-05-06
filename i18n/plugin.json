@@ -1,0 +1,13 @@
+{
+  "uid": "@minsize/plugin-i18n",
+  "name": "MinSize i18n",
+  "description": "Lightweight translation module with dynamic json storage",
+  "version": "1.0.0",
+  "authors": [
+    "xuserz"
+  ],
+  "compatibleVersions": {
+    "min": "1.0.0"
+  },
+  "dependencies": {}
+}
