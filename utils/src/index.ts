@@ -11,7 +11,7 @@ function init(props: PluginProps) {
   // Проверка плагина с помощью механизма проверки из предоставленных свойств
   if (props.checker.verify(init, plugin.uid)) return
 
-  // Добавляем каждую утилиту в глобальное пространство имен явно
+  // Добавляем каждую утилиту в глобальное пространство
   globalThis.clamp = utils.clamp
   globalThis.decWord = utils.decWord
   globalThis.alignTo = utils.alignTo

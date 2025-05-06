@@ -1,4 +1,20 @@
 {
+  "name": "@minsize/plugin-utils",
+  "version": "1.0.1",
+  "description": "Import Frequently Used Utilities",
+  "license": "MIT",
+  "types": "index.ts",
+  "author": {
+    "name": "Egor Kytyukov",
+    "url": "https://vk.com/xuserz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minsize/core_plugins.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "rollup --config config/rollup.config.ts --configPlugin @rollup/plugin-typescript"
   },
