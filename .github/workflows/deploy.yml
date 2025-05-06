@@ -44,10 +44,14 @@ jobs:
           echo "Checking version for package: ${{ matrix.package }}"
           CURRENT_VERSION=$(jq -r .version package.json) # Извлекаем текущую версию из package.json
           echo "Current version of ${{ matrix.package }}: $CURRENT_VERSION"
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0") # Сравниваем с последней меткой
+              
+          # Получаем последнюю метку, относящуюся к конкретному пакету
+          LATEST_TAG=$(git tag --list "${{ matrix.package }}-v*" --sort=-v:refname | head -n 1)
           echo "Latest tag: $LATEST_TAG"
               
-          LATEST_VERSION=${LATEST_TAG#v} # Удаляем 'v' в начале, чтобы получить номер версии
+          # Извлекаем номер версии из тега в формате <package>-v<version>
+          LATEST_VERSION=${LATEST_TAG#${{ matrix.package }}-v}
+          echo "Latest version for ${{ matrix.package }}: $LATEST_VERSION"
               
           if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ]; 
           then

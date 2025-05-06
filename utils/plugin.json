@@ -1,6 +1,6 @@
 {
-  "uid": "@minsize/utils",
-  "name": "MinSize Utils ",
+  "uid": "@minsize/plugin-utils",
+  "name": "MinSize Utils",
   "description": "Import Frequently Used Utilities",
   "version": "1.0.0",
   "authors": [
