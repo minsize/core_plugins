@@ -29,6 +29,7 @@ jobs:
 
       # Configure npm for GitHub Packages
       - name: Configure npm for GitHub Packages
+        working-directory: ${{ matrix.package }}
         run: |
           echo "@minsize:registry=https://npm.pkg.github.com/" >> .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
