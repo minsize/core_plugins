@@ -17,22 +17,25 @@ jobs:
           - utils
 
     steps:
+      # Checkout the repository
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
-          registry-url: https://npm.pkg.github.com
+          node-version: "20" # Use the version of Node.js your project requires
+          cache: "yarn"
 
-      - name: Install dependencies
+      # Install dependencies
+      - name: Install Dependencies
         working-directory: ${{ matrix.package }}
-        run: npm install
+        run: yarn
 
       - name: Build
         working-directory: ${{ matrix.package }}
-        run: npm run build
+        run: yarn build
 
       - name: Publish to npm
         working-directory: ${{ matrix.package }}/dist
