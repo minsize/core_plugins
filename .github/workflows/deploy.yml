@@ -48,8 +48,8 @@ jobs:
       - name: Configure npm for GitHub Packages
         working-directory: ${{ matrix.package }}
         run: |
-          echo "@minsize:registry=https://registry.npmjs.org" > .npmrc
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+          echo "@minsize:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
 
       # Publish to npm
       - name: Publish to npm
