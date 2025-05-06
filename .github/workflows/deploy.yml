@@ -20,38 +20,65 @@ jobs:
           - utils
 
     steps:
-      # Checkout the repository
+      # Клонируем репозиторий для получения кода
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Node.js
+      # Устанавливаем Node.js нужной версии и указываем реестр npm
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20" # Use the version of Node.js your project requires
-          registry-url: "https://npm.pkg.github.com"
-
-      # Configure npm for GitHub Packages
-      - name: Configure npm for GitHub Packages
-        working-directory: ${{ matrix.package }}
-        run: |
-          echo "@minsize:registry=https://npm.pkg.github.com/" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GIT_TOKEN }}" >> .npmrc
-          echo "always-auth=true" >> .npmrc
+          node-version: "22" # Версия Node.js, необходимая для вашего проекта
+          registry-url: "https://registry.npmjs.org" # Указываем реестр пакетов npm
 
       # Install dependencies
       - name: Install Dependencies
         working-directory: ${{ matrix.package }}
         run: yarn
 
+      # Проверяем, изменилась ли версия пакета
+      - name: Check the version
+        working-directory: ${{ matrix.package }}
+        id: check
+        run: |
+          echo "Checking version for package: ${{ matrix.package }}"
+          CURRENT_VERSION=$(jq -r .version package.json) # Извлекаем текущую версию из package.json
+          echo "Current version of ${{ matrix.package }}: $CURRENT_VERSION"
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0") # Сравниваем с последней меткой
+          echo "Latest tag: $LATEST_TAG"
+              
+          LATEST_VERSION=${LATEST_TAG#v} # Удаляем 'v' в начале, чтобы получить номер версии
+              
+          if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ]; 
+          then
+            echo "Version changed"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+            echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Version not changed"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
+          fi
+
       # Build package
       - name: Build
         working-directory: ${{ matrix.package }}
+        if: steps.check.outputs.version_changed == 'true' # Условие на проверку изменения версии
         run: yarn build
 
       # Publish to npm
       - name: Publish to npm
+        if: steps.check.outputs.version_changed == 'true' # Условие на проверку изменения версии
         working-directory: ${{ matrix.package }}/dist
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GIT_TOKEN }}
-        run: npm publish --provenance --access public
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --no-git-checks
+
+      # Добавление тега релиза, если версия изменилась
+      - name: Tag release
+        if: steps.check.outputs.version_changed == 'true'
+        run: |
+          echo "Tagging release for package: ${{ matrix.package }}"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag -a "${{ matrix.package }}-v${{ steps.check.outputs.new_version }}" -m "${{ matrix.package }}-v${{ steps.check.outputs.new_version }}"
+          git push origin "${{ matrix.package }}-v${{ steps.check.outputs.new_version }}"
